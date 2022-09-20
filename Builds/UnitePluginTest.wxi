@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define productVersion="1.0.0.2"?>
+  <?define productName="Unite Plugin Example"?>
+  <?define productId="a9bbad72-eeb3-47cc-b147-345cc48738cf"?>
+  <?define productManufacturer="Intel Corporation"?>
+</Include>

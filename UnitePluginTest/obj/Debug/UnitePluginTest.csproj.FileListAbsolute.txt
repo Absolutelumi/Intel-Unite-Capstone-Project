@@ -1,0 +1,8 @@
+C:\Users\jacks\Desktop\UnitePluginTest\UnitePluginTest\obj\Debug\UnitePluginTest.csproj.AssemblyReference.cache
+C:\Users\jacks\Desktop\UnitePluginTest\UnitePluginTest\obj\Debug\UnitePluginTest.csproj.CoreCompileInputs.cache
+C:\Users\jacks\Desktop\UnitePluginTest\UnitePluginTest\bin\Debug\UnitePluginTest.dll
+C:\Users\jacks\Desktop\UnitePluginTest\UnitePluginTest\bin\Debug\UnitePluginTest.pdb
+C:\Users\jacks\Desktop\UnitePluginTest\UnitePluginTest\bin\Debug\Intel.Unite.Common.dll
+C:\Users\jacks\Desktop\UnitePluginTest\UnitePluginTest\obj\Debug\UnitePluginTest.csproj.CopyComplete
+C:\Users\jacks\Desktop\UnitePluginTest\UnitePluginTest\obj\Debug\UnitePluginTest.dll
+C:\Users\jacks\Desktop\UnitePluginTest\UnitePluginTest\obj\Debug\UnitePluginTest.pdb
