@@ -1,20 +1,21 @@
-﻿using Intel.Unite.Common.Command;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Windows.Threading;
+using Intel.Unite.Common.Command;
 using Intel.Unite.Common.Context;
 using Intel.Unite.Common.Core;
+using Intel.Unite.Common.Display;
 using Intel.Unite.Common.Manifest;
 using Intel.Unite.Common.Module.Common;
 using Intel.Unite.Common.Module.Feature.Hub;
-using System;
-using System.Collections.ObjectModel;
-using System.Windows.Threading;
 
-namespace UnitePluginTest
+namespace UniteSketchpadPlugin
 {
-    public class ModuleHandler : HubFeatureModuleBase
+    public class SketchpadPluginHub : HubFeatureModuleBase
     {
         private const string guid = "a9bbad72-eeb3-47cc-b147-345cc48738cf";
-        private const string name = "Unite Plugin Example";
-        private const string description = "Unite Plugin Example";
+        private const string name = "Sketechpad Plugin Hub";
+        private const string description = "Sketechpad Plugin Hub";
         private const string copyright = "Intel Corporation 2019";
         private const string vendor = "Intel Corporation";
         private const string version = "1.0.0.2";
@@ -69,14 +70,14 @@ namespace UnitePluginTest
 
         public override ModuleInfo ModuleInfo => moduleInfo;
 
-        public ModuleHandler()
+        public SketchpadPluginHub()
         {
 
         }
 
-        public ModuleHandler(IModuleRuntimeContext runtimeContext) : base(runtimeContext)
+        public SketchpadPluginHub(IModuleRuntimeContext runtimeContext) : base(runtimeContext)
         {
-
+            
         }
 
         public override void HubConnected(HubInfo hubInfo)
