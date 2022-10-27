@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Intel.Unite.Common">
-      <HintPath>..\..\Intel Unite SDK\Intel Unite Plugin SDK samples\Intel Unite Plugin SDK samples\UnitePluginTest\Intel.Unite.Common.dll</HintPath>
+      <HintPath>..\External\Intel\Intel.Unite.Common.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
