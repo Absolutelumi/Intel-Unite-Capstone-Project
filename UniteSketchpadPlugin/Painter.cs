@@ -9,8 +9,9 @@ namespace UniteSketchpadPlugin
     /// </summary>
     internal class Painter // TODO: Refactor Painter and Shape such that both are IDisposable ???
     {
-        private readonly Image image;
-        private readonly Graphics graphics;
+        private Image image;
+        private Image imageCopy;
+        private Graphics graphics;
 
         private Shape activeShape;
 
@@ -20,21 +21,18 @@ namespace UniteSketchpadPlugin
             graphics = Graphics.FromImage(image);
         }
 
-        internal Image GetCanvas()
+        internal Image GetCanvas() => image;
+
+        // TODO: Make more consistent - currently dotted
+        internal Image DrawStroke(Point start, Point finish, int radius, Color color)
         {
+            //graphics.FillEllipse(new SolidBrush(color), point.X, point.Y, radius, radius);
+            graphics.DrawLine(new Pen(color), start, finish);
+
             return image;
         }
 
-        // TODO: Stroke type, transparency (baked into color???)
-        internal Image DrawStroke(Point point, int radius, Color color)
-        {
-            graphics.DrawEllipse(new Pen(color), point.X, point.Y, radius, radius);
-
-            return image;
-        }
-
-        // TODO: Refactor ???
-        // Resizing needs TOTAL rework, different anchor points will have different functionalities
+        // TODO: Resizing needs TOTAL rework, different anchor points will have different functionalities
         internal void ResizeShape(Point final)
         {
             activeShape.Resize(final);
@@ -51,8 +49,13 @@ namespace UniteSketchpadPlugin
         {
             if (activeShape == null)
             {
+                imageCopy = image;
                 activeShape = Shape.GetInstanceOf(shape, initial, final, color, image.Width, image.Height);
             }
+
+            // Reset image every time shape is edited
+            image = imageCopy;
+            graphics = Graphics.FromImage(image);
             
             if (finalized)
             {
@@ -66,12 +69,7 @@ namespace UniteSketchpadPlugin
             return image;
         }
 
-        /// <summary>
-        /// Sets the color of all adjacent pixels of the same color of targetPixel to replacementColor.
-        /// </summary>
-        /// <param name="targetPixel">The pixel to be targeted.</param>
-        /// <param name="replacementColor">The color of the fill.</param>
-        /// <returns>The canvas image after the fill operation.</returns>
+        // Sets the color of all adjacent pixels of the same color of targetPixel to replacementColor.
         internal Image Fill(Point targetPixel, Color replacementColor)
         {
             Bitmap bitmap = (Bitmap)image;
@@ -98,6 +96,9 @@ namespace UniteSketchpadPlugin
                     }
                 }
             }
+
+            image = bitmap;
+            graphics = Graphics.FromImage(image);
 
             return image;
         }

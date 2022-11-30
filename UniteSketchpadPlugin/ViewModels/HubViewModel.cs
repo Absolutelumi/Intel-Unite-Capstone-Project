@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Intel.Unite.Common.Display.Hub;
 
-namespace UnitePlugin.HubViewModel
+namespace UniteSketchpadPlugin.ViewModels
 {
     [Serializable]
     public class HubViewModel : INotifyPropertyChanged

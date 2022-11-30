@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace UnitePluginTest.EventArg
+namespace UniteSketchpadPlugin.EventArg
 {
     internal class HubViewEventArgs : EventArgs
     {

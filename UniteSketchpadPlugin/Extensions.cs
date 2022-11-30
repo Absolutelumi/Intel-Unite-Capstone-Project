@@ -5,7 +5,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows;
 
-namespace UnitePluginTest
+namespace UniteSketchpadPlugin
 {
     internal static class Extensions
     {
@@ -23,7 +23,7 @@ namespace UnitePluginTest
         internal static WriteableBitmap GetWritableBitmap(Bitmap bitmap)
         {
             if (bitmap == null) return null;
-            BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            BitmapData bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             var writableBitmap = new WriteableBitmap(bitmapData.Width, bitmapData.Height, 96, 96, PixelFormats.Bgr32, null);
             try
             {

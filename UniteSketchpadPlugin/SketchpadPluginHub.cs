@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Threading;
 using Intel.Unite.Common.Command;
 using Intel.Unite.Common.Context;
@@ -15,26 +16,28 @@ using Intel.Unite.Common.Logging;
 using Intel.Unite.Common.Manifest;
 using Intel.Unite.Common.Module.Common;
 using Intel.Unite.Common.Module.Feature.Hub;
-using UnitePlugin.HubViewModel;
-using UnitePluginTest.Views;
+using UniteSketchpadPlugin.ViewModels;
+using UniteSketchpadPlugin.Views;
+using Point = System.Drawing.Point;
 
 namespace UniteSketchpadPlugin
 {
     public class SketchpadPluginHub : HubFeatureModuleBase
     {
-        private string _html = @"<!DOCTYPE html>";
+        private const string _html = @"<!DOCTYPE html>";
 
         private const string guid = "a9bbad72-eeb3-47cc-b147-345cc48738cf";
         private const string name = "Sketechpad Plugin Hub";
         private const string description = "Sketechpad Plugin Hub";
         private const string copyright = "Intel Corporation 2019";
         private const string vendor = "Intel Corporation";
-        private const string version = "1.0.0.5";
+        private const string version = "1.0.7.4";
 
         private const string minimumUniteVersion = "4.0.0.0";
         private const string entryPoint = "UnitePluginTest.dll";
 
-        private readonly List<FrameworkElement> views = new List<FrameworkElement>();
+        internal CanvasManager canvasManager;
+        internal readonly List<FrameworkElement> views = new List<FrameworkElement>();
 
         private static readonly ModuleInfo moduleInfo = new ModuleInfo
         {
@@ -131,14 +134,67 @@ namespace UniteSketchpadPlugin
 
         public override void Load()
         {
-            // Populate views
+            // Populate Views / Canvas Managers
             CurrentUiDispatcher.Invoke(() =>
             {
                 foreach (var display in RuntimeContext.DisplayManager.AvailableDisplays)
                 {
-                    // TODO: Refactor such that this doesn't need to be done per view ???
+                    // Initiate CanvasManager for this display
+                    if (canvasManager == null)
+                    {
+                        canvasManager = new CanvasManager(display.Size.Width, display.Size.Height);
+                    }
 
-                    var launchButtonView = new LaunchButtonView
+                    Func<Point, Image> onPress = (point) => { return canvasManager.OnPress(point); };
+                    Func<Point, Image> onPressMove = (point) => { return canvasManager.OnPressMove(point); };
+                    Func<Point, Image> onPressRelease = (point) => { return canvasManager.OnRelease(point); };
+
+                    var canvasView = new CanvasView(
+                        onPress, 
+                        onPressMove, 
+                        onPressRelease)
+                    {
+                        DataContext = new HubViewModel
+                        {
+                            HubAllocationInfo = new HubAllocationInfo
+                            {
+                                FriendlyName = "Canvas",
+                                ModuleOwnerId = ModuleInfo.Id,
+                                PhysicalDisplay = display,
+                                ViewType = HubDisplayViewType.PresentationView
+                            }
+                        }
+                    };
+
+                    Action<CanvasManager.Settings> onSettingsUpdate = (settings) => { canvasView.UpdateCanvasImage(canvasManager.SetSettings(settings)); };
+
+                    var canvasControlsView = new CanvasControlsView(canvasManager.GetSettings(), onSettingsUpdate)
+                    {
+                        DataContext = new HubViewModel
+                        {
+                            HubAllocationInfo = new HubAllocationInfo
+                            {
+                                FriendlyName = "CanvasControls",
+                                ModuleOwnerId = ModuleInfo.Id,
+                                PhysicalDisplay = display,
+                                ViewType = HubDisplayViewType.PresentationRibbonView
+                            }
+                        }
+                    };
+
+                    Action onLaunch = () =>
+                    {
+                        var launchViews = RuntimeContext.DisplayManager.GetAllDisplayViews().Where(view =>
+                            view.HubAllocationInfo.ViewType == HubDisplayViewType.QuickAccessAppIconView).ToList();
+
+                        var mainViews = views.Where(view =>
+                        (view.DataContext as HubViewModel).HubAllocationInfo.ViewType == HubDisplayViewType.PresentationView ||
+                        (view.DataContext as HubViewModel).HubAllocationInfo.ViewType == HubDisplayViewType.PresentationRibbonView).ToList();
+
+                        mainViews.ForEach(view => AllocateView(view));
+                    };
+
+                    var launchButtonView = new LaunchButtonView(onLaunch)
                     {
                         DataContext = new HubViewModel
                         {
@@ -153,19 +209,21 @@ namespace UniteSketchpadPlugin
                     };
 
                     views.Add(launchButtonView);
+                    views.Add(canvasView);
+                    views.Add(canvasControlsView);
                 }
+
+                var launchButtonViews = views.Where(view =>
+                (view.DataContext as HubViewModel).HubAllocationInfo.ViewType == HubDisplayViewType.QuickAccessAppIconView).ToList();
+
+                launchButtonViews.ForEach(view => AllocateView(view));
             });
 
-            // Allocate launch button views to hub
-            // TODO: Pretty sure that allocating the views on a type basis is pointless ???
-            // Ergo for now all views in list are allocated
-            views.ForEach(view => AllocateView(view));
-
             RuntimeContext.LogManager.LogMessage(
-                ModuleInfo.Id,
-                LogLevel.Debug,
-                MethodBase.GetCurrentMethod().Name,
-                "Called");
+                    ModuleInfo.Id,
+                    LogLevel.Debug,
+                    MethodBase.GetCurrentMethod().Name,
+                    "Called");
         }
 
         public override bool OkToSleepDisplay()
@@ -224,11 +282,11 @@ namespace UniteSketchpadPlugin
                 "Called");
         }
 
-        private void AllocateView(FrameworkElement view)
+        public void AllocateView(FrameworkElement view)
         {
             HubViewModel hubViewModel = null;
 
-            CurrentUiDispatcher.Invoke(delegate
+            CurrentUiDispatcher.Invoke(() =>
             {
                 hubViewModel = (HubViewModel)view.DataContext;
             });
@@ -238,7 +296,14 @@ namespace UniteSketchpadPlugin
                 hubViewModel.HubAllocationInfo,
                 hubViewModel.AllocatedCallBack
                 );
+        }
 
+        public void DeallocateView(DisplayView view)
+        {
+            RuntimeContext.DisplayManager.DeallocateUiFromHubDisplayAsync(
+                view,
+                (_) => { }
+                );
         }
     }
 }

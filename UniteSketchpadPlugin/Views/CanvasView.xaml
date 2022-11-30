@@ -1,28 +1,23 @@
-﻿<UserControl x:Class="UnitePluginTest.Views.CanvasView"
+﻿<UserControl x:Class="UniteSketchpadPlugin.Views.CanvasView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ViewModel="clr-namespace:UnitePluginTest.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <ViewModel:CanvasViewModel/>
-    </UserControl.DataContext>
     <Grid>
-        <StackPanel Background="#FF423E4F">
-            <Canvas 
-                x:Name="canvas" 
-                Background="Transparent"
-                TouchDown="Canvas_Press" 
-                TouchMove="Canvas_PressMove" 
-                TouchUp="Canvas_PressRelease" 
-                MouseDown="Canvas_Press" 
-                MouseMove="Canvas_PressMove" 
-                MouseUp="Canvas_PressRelease" 
-                ClipToBounds="True">
-            </Canvas>
-            <Image x:Name="Canvas"/>
-        </StackPanel>
+        
+        <Image
+            x:Name="Canvas"
+            Source="/UnitePluginTest;component/Images/initial.png"
+            TouchDown="Canvas_Press" 
+            TouchMove="Canvas_PressMove"
+            TouchUp="Canvas_PressRelease" 
+            MouseDown="Canvas_Press" 
+            MouseMove="Canvas_PressMove"
+            MouseUp="Canvas_PressRelease">
+        </Image>
+        
     </Grid>
+    
 </UserControl>

@@ -1,33 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace UnitePluginTest.Views
+namespace UniteSketchpadPlugin.Views
 {
     /// <summary>
     /// Interaction logic for LaunchButtonView.xaml
     /// </summary>
     public partial class LaunchButtonView : UserControl
     {
-        public LaunchButtonView()
+        private readonly Action onLaunch;
+
+        public LaunchButtonView(Action onLaunch)
         {
             InitializeComponent();
+
+            this.onLaunch = onLaunch;
         }
 
         private void LaunchButton_Click(object sender, RoutedEventArgs e)
         {
-            // Start sketchpad plugin
+            onLaunch();
         }
     }
 }

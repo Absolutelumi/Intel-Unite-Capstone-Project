@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 
 namespace UniteSketchpadPlugin
 {
@@ -66,8 +67,6 @@ namespace UniteSketchpadPlugin
 
         internal Image GetInProgressImage()
         {
-            // Disposal of the bitmap will be the caller's responsibility
-            // TODO: Refactor ??
             Image image = new Bitmap(imgWidth, imgHeight);
 
             using (var graphics = Graphics.FromImage(image))

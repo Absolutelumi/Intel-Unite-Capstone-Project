@@ -1,28 +1,88 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace UnitePluginTest.Views
+namespace UniteSketchpadPlugin.Views
 {
-    /// <summary>
-    /// Interaction logic for CanvasControlsView.xaml
-    /// </summary>
     public partial class CanvasControlsView : UserControl
     {
-        public CanvasControlsView()
+        private CanvasManager.Settings settings;
+
+        private readonly Action<CanvasManager.Settings> onSettingsUpdate;
+
+        public CanvasControlsView(CanvasManager.Settings settings, Action<CanvasManager.Settings> onSettingsUpdate)
         {
             InitializeComponent();
+
+            this.settings = settings;
+            this.onSettingsUpdate = onSettingsUpdate;
+        }
+
+        private void OnRedClick(object sender, RoutedEventArgs e) 
+        {
+            settings.color = Color.Red;
+
+            onSettingsUpdate(settings);
+        }
+
+        private void OnGreenClick(object sender, RoutedEventArgs e)
+        {
+            settings.color = Color.Green;
+
+            onSettingsUpdate(settings);
+        }
+
+        private void OnBlueClick(object sender, RoutedEventArgs e)
+        {
+            settings.color = Color.Blue;
+
+            onSettingsUpdate(settings);
+        }
+
+        private void OnBlackClick(object sender, RoutedEventArgs e)
+        {
+            settings.color = Color.Black;
+
+            onSettingsUpdate(settings);
+        }
+
+        private void OnPenClick(object sender, RoutedEventArgs e)
+        {
+            settings.mode = CanvasManager.Mode.Pen;
+
+            onSettingsUpdate(settings);
+        }
+
+        private void OnFillClick(object sender, RoutedEventArgs e)
+        {
+            settings.mode = CanvasManager.Mode.Fill;
+
+            onSettingsUpdate(settings);
+        }
+
+        private void OnEllipseClick(object sender, RoutedEventArgs e)
+        {
+            settings.shape = Shape.Type.Ellipse;
+            settings.mode = CanvasManager.Mode.Shape;
+
+            onSettingsUpdate(settings);
+        }
+
+        private void OnTriangleClick(object sender, RoutedEventArgs e)
+        {
+            settings.shape = Shape.Type.Triangle;
+            settings.mode = CanvasManager.Mode.Shape;
+
+            onSettingsUpdate(settings);
+        }
+
+        private void OnRectangleClick(object sender, RoutedEventArgs e)
+        {
+            settings.shape = Shape.Type.Rectangle;
+            settings.mode = CanvasManager.Mode.Shape;
+
+            onSettingsUpdate(settings);
         }
     }
 }

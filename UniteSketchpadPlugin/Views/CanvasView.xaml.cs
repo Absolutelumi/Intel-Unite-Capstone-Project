@@ -1,27 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Point = System.Drawing.Point;
+using Image = System.Drawing.Image;
+using System.IO;
 
-namespace UnitePluginTest.Views
+namespace UniteSketchpadPlugin.Views
 {
-    /// <summary>
-    /// Interaction logic for CanvasView.xaml
-    /// </summary>
     public partial class CanvasView : UserControl
     {
-        private readonly Action<Point> onPress;
-        private readonly Action<Point> onPressMove;
-        private readonly Action<Point> onPressRelease;
+        private const string canvasPath = "C:\\Users\\jacks\\Desktop\\Unite Stuff\\UniteSketchpadPlugin\\UniteSketchpadPlugin\\Images\\Temp\\Canvas.png";
 
-        public CanvasView(Action<Point> onPress, Action<Point> onPressMove, Action<Point> onPressRelease)
+        private readonly Func<Point, Image> onPress;
+        private readonly Func<Point, Image> onPressMove;
+        private readonly Func<Point, Image> onPressRelease;
+
+        private bool isPressed = false;
+
+        public CanvasView(
+            Func<Point, Image> onPress, 
+            Func<Point, Image> onPressMove, 
+            Func<Point, Image> onPressRelease)
         {
             InitializeComponent();
 
@@ -30,31 +30,55 @@ namespace UnitePluginTest.Views
             this.onPressRelease = onPressRelease;
         }
 
-        public void UpdateCanvas(ImageSource image)
-        {
-            this.Canvas.Source = image;
-        }
-
         private void Canvas_Press(object sender, EventArgs e)
         {
-            // TODO: Get point from canvas ???
-            Point point = new Point();
+            Point point = GetCurrentPoint();
 
-            onPress(point);
+            isPressed = true;
+            UpdateCanvasImage(onPress(point));
         }
 
         private void Canvas_PressMove(object sender, EventArgs e)
         {
-            Point point = new Point();
+            if (!isPressed) return;
 
-            onPressMove(point);
+            Point point = GetCurrentPoint();
+
+            UpdateCanvasImage(onPressMove(point));
         }
 
         private void Canvas_PressRelease(object sender, EventArgs e)
         {
-            Point point = new Point();
+            Point point = GetCurrentPoint();
 
-            onPressRelease(point);
+            isPressed = false;
+            UpdateCanvasImage(onPressRelease(point));
+        }
+
+        private Point GetCurrentPoint()
+        {
+            System.Windows.Point winPoint = Mouse.GetPosition(this.Canvas);
+            return new Point((int)winPoint.X, (int)winPoint.Y);
+        }
+
+        public void UpdateCanvasImage(Image image)
+        {
+            for (int failCount = 0; ; failCount++)
+            {
+                string path = canvasPath.Split('.')[0] + failCount + ".png";
+
+                try
+                {
+                    File.Delete(path);
+                    image.Save(path);
+
+                    this.Canvas.Source = new BitmapImage(new Uri(path));
+
+                    break;
+                }
+                
+                catch (Exception) { }
+            }
         }
     }
 }
