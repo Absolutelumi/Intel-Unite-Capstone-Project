@@ -3,13 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vm="clr-namespace:UniteSketchpadPlugin.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800">
     <Grid>
         <StackPanel Background="#FF423E4F">
             <Button x:Name="LaunchButton" Click="LaunchButton_Click">
-                <Image x:Name="LaunchButtonImage" Source="/UnitePluginTest;component/Images/app_icon.png"/>
+                <Image x:Name="LaunchButtonImage" Source="/UnitePluginTest;component/Images/pen.png"/>
             </Button>
         </StackPanel>
     </Grid>

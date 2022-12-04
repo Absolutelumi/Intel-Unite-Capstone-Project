@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             Background="Transparent"
              mc:Ignorable="d">
 
     <Grid>
@@ -14,14 +15,28 @@
             <Button Width="155" Height="155" Background="Green" Click="OnGreenClick"/>
             <Button Width="155" Height="155" Background="Red" Click="OnRedClick"/>
 
-            <Button Width="155" Height="155" Background="Aqua" Click="OnPenClick"/>
-            <Button Width="155" Height="155" Background="Purple" Click="OnFillClick"/>
+            <Button Width="155" Height="155" Background="White" Click="OnEraserClick">
+                <Image x:Name="EraserImage" Source="/UnitePluginTest;component/Images/eraser.png"/>
+            </Button>
+            <Button Width="155" Height="155" Background="White" Click="OnPenClick">
+                <Image x:Name="PenImage" Source="/UnitePluginTest;component/Images/pen.png"/>
+            </Button>
+            <Button Width="155" Height="155" Background="White" Click="OnFillClick">
+                <Image x:Name="FillImage" Source="/UnitePluginTest;component/Images/fill.png"/>
+            </Button>
 
-            <Button Width="155" Height="155" Background="Orange" Click="OnEllipseClick"/>
-            <Button Width="155" Height="155" Background="Yellow" Click="OnTriangleClick"/>
-            <Button Width="155" Height="155" Background="Ivory" Click="OnRectangleClick"/>
+            <Button Width="155" Height="155" Background="White" Click="OnEllipseClick">
+                <Image x:Name="EllipseImage" Source="/UnitePluginTest;component/Images/circle.png"/>
+            </Button>
+            <Button Width="155" Height="155" Background="White" Click="OnTriangleClick">
+                <Image x:Name="TriangleImage" Source="/UnitePluginTest;component/Images/triangle.png"/>
+            </Button>
+            <Button Width="155" Height="155" Background="White" Click="OnRectangleClick">
+                <Image Width="130" Height="130" x:Name="SquareImage" Source="/UnitePluginTest;component/Images/square.png"/>
+            </Button>
             
             <!-- Filler Button -->
+            <Button Width="90" Height="155"/>
 
         </StackPanel>
 

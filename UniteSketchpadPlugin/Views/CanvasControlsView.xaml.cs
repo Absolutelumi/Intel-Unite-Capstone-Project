@@ -47,6 +47,14 @@ namespace UniteSketchpadPlugin.Views
             onSettingsUpdate(settings);
         }
 
+        private void OnEraserClick(object sender, RoutedEventArgs e)
+        {
+            settings.color = Color.White;
+            settings.mode = CanvasManager.Mode.Pen;
+
+            onSettingsUpdate(settings);
+        }
+
         private void OnPenClick(object sender, RoutedEventArgs e)
         {
             settings.mode = CanvasManager.Mode.Pen;

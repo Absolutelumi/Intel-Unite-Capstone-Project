@@ -10,7 +10,14 @@ namespace UniteSketchpadPlugin
 
         protected override void DrawShape(Graphics graphics)
         {
-            graphics.DrawRectangle(new Pen(color), x, y, width, height);
+            Point[] points = new Point[4];
+
+            points[0] = new Point(x, y);
+            points[1] = new Point(x + width, y);
+            points[2] = new Point(x + width, y + height);
+            points[3] = new Point(x, y + height);
+
+            graphics.DrawPolygon(new Pen(new SolidBrush(color), 5), points);
         }
     }
 }

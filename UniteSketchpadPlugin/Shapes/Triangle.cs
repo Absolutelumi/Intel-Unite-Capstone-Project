@@ -16,7 +16,7 @@ namespace UniteSketchpadPlugin
             points[1] = new Point(x, y + height);
             points[2] = new Point(x + width, y + height);
 
-            graphics.DrawPolygon(new Pen(color), points);
+            graphics.DrawPolygon(new Pen(new SolidBrush(color), 5), points);
         }
     }
 }

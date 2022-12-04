@@ -33,16 +33,29 @@ namespace UniteSketchpadPlugin
 
         protected abstract void DrawShape(Graphics graphics);
 
-        internal void Reposition(Point initial)
+        internal void Reposition(int dx, int dy)
         {
-            this.x = initial.X;
-            this.y = initial.Y;
+            this.x += dx;
+            this.y += dy;
         }
 
         internal void Resize(Point final)
         {
             this.width = final.X - this.x;
             this.height = final.Y - this.y;
+        }
+
+        internal bool Contains(Point point)
+        {
+            bool widthOk = width < 0 ?
+                x >= point.X && point.X > x + width :
+                x <= point.X && point.X < x + width;
+
+            bool heightOk = height < 0 ?
+                y >= point.Y && point.Y > y + height :
+                y <= point.Y && point.Y < y + height;
+
+            return widthOk && heightOk;
         }
 
         // TODO: Refactor - Should not be calling DrawShape() here
@@ -71,18 +84,17 @@ namespace UniteSketchpadPlugin
 
             using (var graphics = Graphics.FromImage(image))
             {
-                // TODO: Set these to make the line look right
-                Pen blackPen = new Pen(Color.Black, 5);
-                blackPen.DashPattern = new float[] { 5, 5, 5, 5 };
+                Pen pen = new Pen(new SolidBrush(Color.Black), 5);
+                pen.DashPattern = new float[] { 5, 5, 5, 5 };
 
                 // Draw shape first, so line goes over the shape
                 DrawShape(graphics);
 
                 // Draw dotted outline around shape
-                graphics.DrawLine(blackPen, x, y, x + width, y);
-                graphics.DrawLine(blackPen, x, y + height, x + width, y + height);
-                graphics.DrawLine(blackPen, x, y, x, y + height);
-                graphics.DrawLine(blackPen, x + width, y, x + width, y + height);
+                graphics.DrawLine(pen, x, y, x + width, y);
+                graphics.DrawLine(pen, x, y + height, x + width, y + height);
+                graphics.DrawLine(pen, x, y, x, y + height);
+                graphics.DrawLine(pen, x + width, y, x + width, y + height);
             }
 
             return image;
@@ -90,8 +102,6 @@ namespace UniteSketchpadPlugin
 
         internal Image GetImage()
         {
-            // Disposal of the bitmap will be the caller's responsibility
-            // TODO: Refactor ??
             Image image = new Bitmap(imgWidth, imgHeight);
 
             using (var graphics = Graphics.FromImage(image))

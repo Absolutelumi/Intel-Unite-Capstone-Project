@@ -31,7 +31,7 @@ namespace UniteSketchpadPlugin
         private const string description = "Sketechpad Plugin Hub";
         private const string copyright = "Intel Corporation 2019";
         private const string vendor = "Intel Corporation";
-        private const string version = "1.0.7.4";
+        private const string version = "1.1.0.1";
 
         private const string minimumUniteVersion = "4.0.0.0";
         private const string entryPoint = "UnitePluginTest.dll";

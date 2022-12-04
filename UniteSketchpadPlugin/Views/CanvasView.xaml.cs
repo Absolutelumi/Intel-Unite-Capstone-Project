@@ -61,7 +61,7 @@ namespace UniteSketchpadPlugin.Views
             return new Point((int)winPoint.X, (int)winPoint.Y);
         }
 
-        public void UpdateCanvasImage(Image image)
+        public void UpdateCanvasImage(Image image, bool isBackground = false)
         {
             for (int failCount = 0; ; failCount++)
             {
@@ -72,7 +72,8 @@ namespace UniteSketchpadPlugin.Views
                     File.Delete(path);
                     image.Save(path);
 
-                    this.Canvas.Source = new BitmapImage(new Uri(path));
+                    if (isBackground) this.CanvasBackground.Source = new BitmapImage(new Uri(path));
+                    else this.Canvas.Source = new BitmapImage(new Uri(path));
 
                     break;
                 }

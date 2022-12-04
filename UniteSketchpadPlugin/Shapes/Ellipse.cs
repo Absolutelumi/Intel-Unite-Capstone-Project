@@ -10,7 +10,7 @@ namespace UniteSketchpadPlugin
 
         protected override void DrawShape(Graphics graphics)
         {
-            graphics.DrawEllipse(new Pen(color), x, y, width, height);
+            graphics.DrawEllipse(new Pen(new SolidBrush(color), 5), x, y, width, height);
         }
     }
 }

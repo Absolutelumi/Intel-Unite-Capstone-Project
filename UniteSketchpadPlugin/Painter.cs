@@ -4,10 +4,7 @@ using Point = System.Drawing.Point;
 
 namespace UniteSketchpadPlugin
 {
-    /// <summary>
-    /// Allows for the painting of a transparent canvas of a defined width and height.
-    /// </summary>
-    internal class Painter // TODO: Refactor Painter and Shape such that both are IDisposable ???
+    internal class Painter
     {
         private Image image;
         private Image imageCopy;
@@ -23,11 +20,12 @@ namespace UniteSketchpadPlugin
 
         internal Image GetCanvas() => image;
 
-        // TODO: Make more consistent - currently dotted
         internal Image DrawStroke(Point start, Point finish, int radius, Color color)
         {
-            //graphics.FillEllipse(new SolidBrush(color), point.X, point.Y, radius, radius);
-            graphics.DrawLine(new Pen(color), start, finish);
+            Pen strokePen = new Pen(new SolidBrush(color), radius);
+            strokePen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+            graphics.DrawLine(strokePen, start, finish);
 
             return image;
         }
@@ -38,30 +36,68 @@ namespace UniteSketchpadPlugin
             activeShape.Resize(final);
         }
 
-        internal void RepositionShape(Point initial)
+        internal Image RepositionShape(int dx, int dy)
         {
-            activeShape.Reposition(initial);
+            // Reset image every time shape is edited
+            image = (Image)imageCopy.Clone();
+            graphics = Graphics.FromImage(image);
+
+            activeShape.Reposition(dx, dy);
+
+            graphics.DrawImage(activeShape.GetInProgressImage(), 0, 0, image.Width, image.Height);
+
+            return image;
         }
 
-        // TODO: Handle resizing, movement
-        // TODO ERROR: Is just constantly redrawing the shape on the canvas - To fix, will need 'baseImage' and 'shapeImage' or such
-        internal Image DrawShape(Shape.Type shape, Point initial, Point final, Color color, bool finalized = false)
+        internal Image DrawShape()
+        {
+            if (activeShape == null) return GetCanvas();
+
+            // Reset image every time shape is edited
+            image = (Image)imageCopy.Clone();
+            graphics = Graphics.FromImage(image);
+
+            graphics.DrawImage(activeShape.GetImage(), 0, 0, image.Width, image.Height);
+            return image;
+        }
+
+        internal Image DrawShapeFinal()
+        {
+            if (activeShape == null) return GetCanvas();
+
+            // Reset image every time shape is edited
+            image = (Image)imageCopy.Clone();
+            graphics = Graphics.FromImage(image);
+
+            graphics.DrawImage(activeShape.GetImage(), 0, 0, image.Width, image.Height);
+            activeShape = null;
+
+            return image;
+        }
+
+        internal bool activeShapeContains(Point point) => activeShape.Contains(point);
+
+        internal Image DrawShape(Shape.Type shape, Point initial, Point final, Color color, bool inShapeEdit = false, bool finalized = false)
         {
             if (activeShape == null)
             {
-                imageCopy = image;
+                imageCopy = (Image)image.Clone();
                 activeShape = Shape.GetInstanceOf(shape, initial, final, color, image.Width, image.Height);
             }
+            else
+            {
+                // Reset image every time shape is edited
+                image = (Image)imageCopy.Clone();
+                graphics = Graphics.FromImage(image);
 
-            // Reset image every time shape is edited
-            image = imageCopy;
-            graphics = Graphics.FromImage(image);
+                activeShape.Resize(final);
+            }
             
-            if (finalized)
+            if (!inShapeEdit)
             {
                 graphics.DrawImage(activeShape.GetImage(), 0, 0, image.Width, image.Height);
 
-                activeShape = null;
+                if (finalized) activeShape = null;
             }
 
             else graphics.DrawImage(activeShape.GetInProgressImage(), 0, 0, image.Width, image.Height);

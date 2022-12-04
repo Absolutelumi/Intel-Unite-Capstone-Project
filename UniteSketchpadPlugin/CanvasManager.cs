@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Media.Media3D;
 
 namespace UniteSketchpadPlugin
 {
@@ -11,6 +12,10 @@ namespace UniteSketchpadPlugin
         private Point initial;
         private Point current;
 
+        // Shape Edit Settings
+        private bool repositioning = false;
+        private bool resizing = false;
+
         internal CanvasManager(int imgWidth, int imgHeight)
         {
             painter = new Painter(imgWidth,imgHeight);
@@ -18,7 +23,7 @@ namespace UniteSketchpadPlugin
             settings = new Settings
             {
                 mode = Mode.Pen,
-                color = Color.Red,
+                color = Color.Black,
                 shape = Shape.Type.Rectangle,
                 radius = 5
             };
@@ -34,7 +39,8 @@ namespace UniteSketchpadPlugin
             if (this.settings.mode != settings.mode &&
                 this.settings.mode == Mode.ShapeEdit)
             {
-                return painter.DrawShape(settings.shape, this.initial, this.current, settings.color, true);
+                this.settings = settings;
+                return painter.DrawShapeFinal();
             }
 
             this.settings = settings;
@@ -43,6 +49,9 @@ namespace UniteSketchpadPlugin
 
         internal Image OnPress(Point point)
         {
+            Point previousInitial = initial;
+            Point previousCurrent = current;
+
             initial = point;
             current = point;
 
@@ -54,6 +63,24 @@ namespace UniteSketchpadPlugin
             else if (settings.mode == Mode.Shape)
             {
                 return painter.DrawShape(settings.shape, this.initial, this.current, settings.color);
+            }
+
+            else if (settings.mode == Mode.ShapeEdit)
+            {
+                // If inside shape set anchor point and set repositioning mode on
+                if (painter.activeShapeContains(initial)) repositioning = true;
+
+                // If on border of shape
+
+                // If point outside of shape, user is trying to make another
+                else
+                {
+                    settings.mode = Mode.Shape;
+                    repositioning = false;
+
+                    painter.DrawShapeFinal();
+                    return painter.DrawShape(settings.shape, initial, current, settings.color);
+                }
             }
 
             else if (settings.mode == Mode.Fill)
@@ -81,13 +108,10 @@ namespace UniteSketchpadPlugin
 
             else if (settings.mode == Mode.ShapeEdit)
             {
-                // If inside shape
-                //painter.RepositionShape(current);
-
-                // If on border of shape
-                // TODO
-
-                //return painter.DrawShape(settings.shape, this.initial, this.current, settings.color);
+                if (repositioning)
+                {
+                    return painter.RepositionShape(current.X - prevCurrent.X, current.Y - prevCurrent.Y);
+                }
             }
 
             return painter.GetCanvas();
@@ -100,7 +124,7 @@ namespace UniteSketchpadPlugin
             if (settings.mode == Mode.Shape)
             {
                 settings.mode = Mode.ShapeEdit;
-                return painter.DrawShape(settings.shape, this.initial, this.current, settings.color);
+                return painter.DrawShape(settings.shape, this.initial, this.current, settings.color, inShapeEdit: true);
             }
 
             return painter.GetCanvas();
